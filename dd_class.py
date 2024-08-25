@@ -397,7 +397,7 @@ class Elevage:
         # Crossing both dic 
         for color_m, weight_m in dic_dinde_m.items() :
             for color_f, weight_f in dic_dinde_f.items() :
-                if self.check_compatibility(color_m, color_f):
+                if self.check_compatibility(color_m, color_f) and color_m != color_f :
                     color_prob = self.crossing_compatible(color_m, weight_m, color_f, weight_f, color_prob)
                 else:
                     color_prob = self.crossing_incompatible(color_m, weight_m, color_f, weight_f, color_prob)
