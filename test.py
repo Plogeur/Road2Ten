@@ -43,6 +43,10 @@ class TestCrosing(unittest.TestCase):
         self.dd_sb1 = dd_class.Dragodinde(200, "M", "Indigo et Orchidée", 6)
         self.dd_sb2 = dd_class.Dragodinde(201, "F", "Pourpre et Ivoire", 8)
 
+        # simple bi 2 
+        self.dd_sb3 = dd_class.Dragodinde(202, "M", "Rousse et Amande", 2)
+        self.dd_sb4 = dd_class.Dragodinde(203, "F", "Rousse et Amande", 2)
+
         # first bi
         self.p1 = dd_class.Node("Rousse")
         self.p2 = dd_class.Node("Dorée")
@@ -132,7 +136,7 @@ class TestCrosing(unittest.TestCase):
  
         self.elevage = dd_class.Elevage([self.dd_1, self.dd_2, self.dd_3, self.dd_4, self.dd_5,
                                          self.dd_sm1, self.dd_sm2, self.dd_sb1, self.dd_sb2,
-                                         self.dd_fb1, self.dd_fb2])
+                                         self.dd_fb1, self.dd_fb2, self.dd_sb3, self.dd_sb4])
 
     def uni_test_bad_crosing(self):
         with self.assertRaises(ValueError) as context:
@@ -165,7 +169,7 @@ class TestCrosing(unittest.TestCase):
         print("dic_probability mono-mono: ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
     
-    def test_crosing_mono_bi(self):
+    def test_crosing_mono_bi(self): #TODO : Recheck proba on the website
         _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(4))
         expected_probability = {
                 "Amande" : 70.60,
@@ -244,6 +248,15 @@ class TestCrosing(unittest.TestCase):
             }
         
         print("dic_probability simple bi-bi : ", dic_probability, '\n')
+        self.assertEqual(dic_probability, expected_probability)
+
+    def test_crosing_simple_bi_bi2(self):
+        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(202), self.elevage.get_dd_by_id(203))
+        expected_probability = {
+                "Rousse et Amande" : 100
+            }
+        
+        print("dic_probability simple bi-bi 2 : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_first_bi_bi(self):

@@ -19,7 +19,7 @@ However, there are a few key differences :
 
 - Only one Dragodinde is produced per breeding.
 - Capacities are not considered.
-- Specific cases may have a 5-10% variation from the website's data (see test.py for details).
+- Specific cases may have a 3% variation from the website's data (see test.py for details).
 
 ## Installation
 
