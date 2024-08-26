@@ -140,12 +140,12 @@ class TestCrosing(unittest.TestCase):
 
     def uni_test_bad_crosing(self):
         with self.assertRaises(ValueError) as context:
-            self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(3))
+            self.elevage.breeding(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(3))
 
         self.assertEqual(str(context.exception), "Cannot breed dragodindes of the same sex.")
 
     def test_crosing_big_ancestor_mono_mono(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(101), self.elevage.get_dd_by_id(5))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(101), self.elevage.get_dd_by_id(5))
         expected_probability = {
                 "Amande" : 100
             }
@@ -154,7 +154,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_mono_mono(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(2))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(2))
         expected_probability = {
                 "Rousse": 41.019,
                 "Amande": 41.019,
@@ -170,7 +170,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
     
     def test_crosing_mono_bi(self) :
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(4))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(4))
         expected_probability = {
                 "Amande" : 72.975,
                 "Ebène": 8.391,
@@ -191,7 +191,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
     
     def test_crosing_bi_bi(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(3), self.elevage.get_dd_by_id(4))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(3), self.elevage.get_dd_by_id(4))
         expected_probability = {
                 "Rousse et Amande" : 16.595,
                 "Pourpre et Orchidée" : 13.321,
@@ -220,7 +220,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_mono_bi(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(100), self.elevage.get_dd_by_id(201))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(100), self.elevage.get_dd_by_id(201))
         expected_probability = {
                 "Rousse" : 83.333,
                 "Pourpre et Ivoire" : 16.667
@@ -230,7 +230,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_mono_mono(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(100), self.elevage.get_dd_by_id(101))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(100), self.elevage.get_dd_by_id(101))
         expected_probability = {
                 "Rousse" : 45.455,
                 "Amande" : 45.455,
@@ -241,7 +241,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_bi_bi(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(200), self.elevage.get_dd_by_id(201))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(200), self.elevage.get_dd_by_id(201))
         expected_probability = {
                 "Indigo et Orchidée" : 60.0,
                 "Pourpre et Ivoire" : 40.0,
@@ -251,7 +251,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_bi_bi2(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(202), self.elevage.get_dd_by_id(203))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(202), self.elevage.get_dd_by_id(203))
         expected_probability = {
                 "Rousse et Amande" : 100
             }
@@ -260,7 +260,7 @@ class TestCrosing(unittest.TestCase):
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_first_bi_bi(self):
-        _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(300), self.elevage.get_dd_by_id(301))
+        _, dic_probability = self.elevage.breeding(self.elevage.get_dd_by_id(300), self.elevage.get_dd_by_id(301))
         expected_probability = {
                 "Rousse et Dorée" : 19.756,
                 "Amande et Dorée" : 19.756,

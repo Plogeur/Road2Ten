@@ -421,11 +421,8 @@ class Elevage:
 
     def normalise_proba(self, proba_dict : dict) -> dict :
         return {key: value / sum(proba_dict.values()) for key, value in proba_dict.items()}
-           
-    def accouplement_naissance(self, male: Dragodinde, female: Dragodinde):
-        if male is None or female is None:
-            raise ValueError("One or both of the Dragodindes do not exist.")
 
+    def breeding(self, male: Dragodinde, female: Dragodinde):
         if male.get_sex() == female.get_sex():
             raise ValueError("Cannot breed dragodindes of the same sex.")
 
