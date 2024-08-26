@@ -421,7 +421,19 @@ class Elevage:
 
     def normalise_proba(self, proba_dict : dict) -> dict :
         return {key: value / sum(proba_dict.values()) for key, value in proba_dict.items()}
+    
+    def number_new_born(self):
+        """number of baby : 1 (62.5%), 2 (31.25%) ou 3 (6.25%)"""
+        rand_value = random.random()
 
+        # Determine the number of babies based on the probabilities
+        if rand_value < 0.625:
+            return 1  # 62.5% probability
+        elif rand_value < 0.9375:
+            return 2  # 31.25% probability (0.625 + 0.3125)
+        else:
+            return 3  # 6.25% probability (1 - 0.9375)
+        
     def breeding(self, male: Dragodinde, female: Dragodinde):
         if male.get_sex() == female.get_sex():
             raise ValueError("Cannot breed dragodindes of the same sex.")
@@ -429,22 +441,26 @@ class Elevage:
         # Calcul the color probablity dictionnary
         male.add_reproduction()
         female.add_reproduction()
-        nouvel_id = len(self.dragodindes) + 1
-        sexe = random.choice(['M', 'F'])
         dic_probability = self.crossing(male, female)
         dic_probability = self.round_dict_values(self.normalise_proba(dic_probability))
-        color = self.choice_color(dic_probability)
-        
-        # Create an new dd
-        generation = self.get_generation(color)
-        node_parent_m = male.get_arbre_genealogique().get_node()
-        node_parent_f = female.get_arbre_genealogique().get_node()
-        new_ind = Node(color, 0.5, node_parent_m, node_parent_f)
-        nouvel_arbre_genealogique = Genealogie(new_ind)
-        nouvelle_dd = Dragodinde(nouvel_id, sexe, color, generation, nouvel_arbre_genealogique)
-        self.naissance(nouvelle_dd)
+        number_new_born = self.number_new_born()
+        list_new_born = []
+
+        for _ in range(number_new_born) :
+            # Create new dd
+            sexe = random.choice(['M', 'F'])
+            nouvel_id = len(self.dragodindes) + 1
+            color = self.choice_color(dic_probability)
+            generation = self.get_generation(color)
+            node_parent_m = male.get_arbre_genealogique().get_node()
+            node_parent_f = female.get_arbre_genealogique().get_node()
+            new_ind = Node(color, 0.5, node_parent_m, node_parent_f)
+            nouvel_arbre_genealogique = Genealogie(new_ind)
+            nouvelle_dd = Dragodinde(nouvel_id, sexe, color, generation, nouvel_arbre_genealogique)
+            self.naissance(nouvelle_dd)
+            list_new_born.append(nouvelle_dd)
 
         self.check_mort(male)
         self.check_mort(female)
 
-        return nouvelle_dd, dic_probability
+        return list_new_born, dic_probability
