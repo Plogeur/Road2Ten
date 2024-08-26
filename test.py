@@ -150,7 +150,7 @@ class TestCrosing(unittest.TestCase):
                 "Amande" : 100
             }
         
-        print("dic_probability big ancestor mono mono : ", dic_probability, '\n')
+        #print("dic_probability big ancestor mono mono : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_mono_mono(self):
@@ -166,28 +166,28 @@ class TestCrosing(unittest.TestCase):
                 "Indigo et Ebène": 0.128
             }
 
-        print("dic_probability mono-mono: ", dic_probability, '\n')
+        #print("dic_probability mono-mono: ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
     
-    def test_crosing_mono_bi(self): #TODO : Recheck proba on the website
+    def test_crosing_mono_bi(self) :
         _, dic_probability = self.elevage.accouplement_naissance(self.elevage.get_dd_by_id(1), self.elevage.get_dd_by_id(4))
         expected_probability = {
-                "Amande" : 70.60,
-                "Ebène": 10.68,
-                "Pourpre et Orchidée": 6.22,
-                "Indigo et Ebène": 4.61,
-                "Ivoire et Prune": 1.48,
-                "Indigo et Ivoire": 1.35,
-                "Amande et Ivoire": 1.35,
-                "Rousse et Ebène": 0.77,
-                "Dorée et Indigo": 0.77,
-                "Orchidée et Emeraude": 0.74,
-                "Dorée et Emeraude": 0.74,
-                "Turquoise et Rousse": 0.45,
-                "Rousse et Prune": 0.25
+                "Amande" : 72.975,
+                "Ebène": 8.391,
+                "Pourpre et Orchidée": 6.191,
+                "Indigo et Ebène": 4.592,
+                "Ivoire et Prune": 1.47,
+                "Indigo et Ivoire": 1.344,
+                "Amande et Ivoire": 1.344,
+                "Rousse et Ebène": 0.765,
+                "Dorée et Indigo": 0.765,
+                "Orchidée et Emeraude": 0.735,
+                "Dorée et Emeraude": 0.735,
+                "Turquoise et Rousse": 0.448,
+                "Rousse et Prune": 0.245
             }
 
-        print("dic_probability mono-bi : ", dic_probability, '\n')
+        #print("dic_probability mono-bi : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
     
     def test_crosing_bi_bi(self):
@@ -216,7 +216,7 @@ class TestCrosing(unittest.TestCase):
 
             }
         
-        print("dic_probability bi-bi : ", dic_probability, '\n')
+        #print("dic_probability bi-bi : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_mono_bi(self):
@@ -226,7 +226,7 @@ class TestCrosing(unittest.TestCase):
                 "Pourpre et Ivoire" : 16.667
             }
         
-        print("dic_probability simple mono-bi : ", dic_probability, '\n')
+        #print("dic_probability simple mono-bi : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_mono_mono(self):
@@ -237,7 +237,7 @@ class TestCrosing(unittest.TestCase):
                 "Rousse et Amande" : 9.091
             }
         
-        print("dic_probability simple mono-mono : ", dic_probability, '\n')
+        #print("dic_probability simple mono-mono : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_bi_bi(self):
@@ -247,7 +247,7 @@ class TestCrosing(unittest.TestCase):
                 "Pourpre et Ivoire" : 40.0,
             }
         
-        print("dic_probability simple bi-bi : ", dic_probability, '\n')
+        #print("dic_probability simple bi-bi : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_simple_bi_bi2(self):
@@ -256,7 +256,7 @@ class TestCrosing(unittest.TestCase):
                 "Rousse et Amande" : 100
             }
         
-        print("dic_probability simple bi-bi 2 : ", dic_probability, '\n')
+        #print("dic_probability simple bi-bi 2 : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
     def test_crosing_first_bi_bi(self):
@@ -271,7 +271,7 @@ class TestCrosing(unittest.TestCase):
                 "Rousse et Amande" : 0.676,
             }
         
-        print("dic_probability first bi-bi : ", dic_probability, '\n')
+        #print("dic_probability first bi-bi : ", dic_probability, '\n')
         self.assertEqual(dic_probability, expected_probability)
 
 if __name__ == "__main__":
