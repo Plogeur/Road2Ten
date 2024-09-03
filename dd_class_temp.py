@@ -1,16 +1,14 @@
 from collections import defaultdict 
 import random
-#from dataclasses import dataclass, field
-#from typing import Optional
 
-# @dataclass
 class Dragodinde:
-    def __init__(self, id : int, sex: str, color: str, generation: int, arbre_genealogique=None, nombre_reproductions=0):
+    def __init__(self, id : int, sex: str, color: str, generation: int, arbre_genealogique=None, temps_gestation=0, nombre_reproductions=0):
         self.id = id
         self.sex = sex
         self.color = color
         self.generation = generation
         self.arbre_genealogique = arbre_genealogique
+        self.temps_gestation = temps_gestation
         self.nombre_reproductions = nombre_reproductions
 
         # Initialize arbre_genealogique
@@ -39,6 +37,9 @@ class Dragodinde:
     
     def get_arbre_genealogique(self):
         return self.arbre_genealogique
+    
+    def get_temps_gestation(self) :
+        return self.temps_gestation
     
     def get_nombre_reproductions(self) :
         return self.nombre_reproductions
@@ -109,35 +110,31 @@ class Generations:
     def initialize_generations(self):
  
         generations_data = [
-            # (generation, monocolor, dict(color: apprentissage %))
-            (1, True, {"Rousse": 1.0, "Amande": 1.0, "Dorée": 0.2}),
-            (2, False, {"Rousse et Amande": 0.8, "Rousse et Dorée": 0.8, "Amande et Dorée": 0.8}),
-            (3, True, {"Indigo": 0.8, "Ebène": 0.8}),
+            # (generation, monocolor, dict(color: apprentissage (%)), gestation time(male, female) (h))
+            (1, True, {"Rousse": 1.0, "Amande": 1.0, "Dorée": 0.2}, (24, 48)),
+            (2, False, {"Rousse et Amande": 0.8, "Rousse et Dorée": 0.8, "Amande et Dorée": 0.8}, (24, 60)),
+            (3, True, {"Indigo": 0.8, "Ebène": 0.8}, (24, 72)),
             (4, False, {
                 "Rousse et Indigo": 0.8, "Rousse et Ebène": 0.8, "Amande et Indigo": 0.8, "Amande et Ebène": 0.8,
-                "Dorée et Indigo": 0.8, "Dorée et Ebène": 0.8, "Indigo et Ebène": 0.8
-            }),
-            (5, True, {"Pourpre": 0.6, "Orchidée": 0.6}),
+                "Dorée et Indigo": 0.8, "Dorée et Ebène": 0.8, "Indigo et Ebène": 0.8}, (24, 84)),
+            (5, True, {"Pourpre": 0.6, "Orchidée": 0.6}, (24, 96)),
             (6, False, {
                 "Pourpre et Rousse": 0.6, "Orchidée et Rousse": 0.6, "Amande et Pourpre": 0.6, "Amande et Orchidée": 0.6,
                 "Dorée et Pourpre": 0.6, "Dorée et Orchidée": 0.6, "Indigo et Pourpre": 0.6, "Indigo et Orchidée": 0.6,
-                "Ebène et Pourpre": 0.6, "Ebène et Orchidée": 0.6, "Pourpre et Orchidée": 0.6
-            }),
-            (7, True, {"Ivoire": 0.6, "Turquoise": 0.6}),
+                "Ebène et Pourpre": 0.6, "Ebène et Orchidée": 0.6, "Pourpre et Orchidée": 0.6}, (24, 108)),
+            (7, True, {"Ivoire": 0.6, "Turquoise": 0.6}, (24, 120)),
             (8, False, {
                 "Ivoire et Rousse": 0.4, "Turquoise et Rousse": 0.4, "Amande et Ivoire": 0.4, "Amande et Turquoise": 0.4,
                 "Dorée et Ivoire": 0.4, "Dorée et Turquoise": 0.4, "Indigo et Ivoire": 0.4, "Indigo et Turquoise": 0.4,
                 "Ebène et Ivoire": 0.4, "Ebène et Turquoise": 0.4, "Pourpre et Ivoire": 0.4, "Turquoise et Pourpre": 0.4,
-                "Ivoire et Orchidée": 0.4, "Turquoise et Orchidée": 0.4, "Ivoire et Turquoise": 0.4
-            }),
-            (9, True, {"Emeraude": 0.4, "Prune": 0.4}),
+                "Ivoire et Orchidée": 0.4, "Turquoise et Orchidée": 0.4, "Ivoire et Turquoise": 0.4}, (24, 132)),
+            (9, True, {"Emeraude": 0.4, "Prune": 0.4}, (24, 144)),
             (10, False, {
                 "Rousse et Emeraude": 0.2, "Rousse et Prune": 0.2, "Amande et Emeraude": 0.2, "Amande et Prune": 0.2,
                 "Dorée et Emeraude": 0.2, "Dorée et Prune": 0.2, "Indigo et Emeraude": 0.2, "Indigo et Prune": 0.2,
                 "Ebène et Emeraude": 0.2, "Ebène et Prune": 0.2, "Pourpre et Emeraude": 0.2, "Pourpre et Prune": 0.2,
                 "Orchidée et Emeraude": 0.2, "Orchidée et Prune": 0.2, "Ivoire et Emeraude": 0.2, "Ivoire et Prune": 0.2,
-                "Turquoise et Emeraude": 0.2, "Turquoise et Prune": 0.2, "Prune et Emeraude": 0.2
-            })
+                "Turquoise et Emeraude": 0.2, "Turquoise et Prune": 0.2, "Prune et Emeraude": 0.2}, (24, 156))
         ]
 
         generations = []
@@ -440,6 +437,9 @@ class Elevage:
         if male.get_sex() == female.get_sex():
             raise ValueError("Cannot breed dragodindes of the same sex.")
 
+        if male.get_temps_gestation() > 0 or female.get_temps_gestation() > 0 :
+            raise ValueError("Cannot breed dragodinddes of a gestation time > 0")
+        
         # Calcul the color probablity dictionnary
         male.add_reproduction()
         female.add_reproduction()
