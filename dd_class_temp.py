@@ -2,13 +2,13 @@ from collections import defaultdict
 import random
 
 class Dragodinde:
-    def __init__(self, id : int, sex: str, color: str, generation: int, arbre_genealogique=None, temps_gestation=0, nombre_reproductions=0):
+    def __init__(self, id : int, sex: str, color: str, generation: int, gestation_time, arbre_genealogique=None, nombre_reproductions=0):
         self.id = id
         self.sex = sex
         self.color = color
         self.generation = generation
+        self.gestation_time = gestation_time
         self.arbre_genealogique = arbre_genealogique
-        self.temps_gestation = temps_gestation
         self.nombre_reproductions = nombre_reproductions
 
         # Initialize arbre_genealogique
@@ -38,9 +38,15 @@ class Dragodinde:
     def get_arbre_genealogique(self):
         return self.arbre_genealogique
     
-    def get_temps_gestation(self) :
-        return self.temps_gestation
+    def get_gestation_time(self) :
+        return self.gestation_time
+
+    def reduce_gestation_time_dd(self) :
+        self.gestation_time -= 1
     
+    def set_gestation_time(self, time) :
+        self.gestation_time = time
+
     def get_nombre_reproductions(self) :
         return self.nombre_reproductions
     
@@ -56,11 +62,12 @@ class Dragodinde:
                 f"Nombre de reproductions: {self.nombre_reproductions}\n")
 
 class Generation:
-    def __init__(self, number_generation: int, apprendissage:float, monocolor: bool, colors: list):
+    def __init__(self, number_generation: int, apprendissage:float, monocolor: bool, colors: list, time_gestation : tuple):
         self.number_generation = number_generation
         self.apprendissage = apprendissage
         self.monocolor = monocolor
         self.colors = colors
+        self.time_gestation = time_gestation
 
     def get_number_generation(self):
         return self.number_generation
@@ -68,6 +75,9 @@ class Generation:
     def get_apprendissage(self):
         return self.apprendissage
 
+    def get_time_gestation(self):
+        return self.time_gestation
+    
     def get_monocolor(self):
         return self.monocolor
 
@@ -92,7 +102,18 @@ class Generations:
             if color in generation.get_colors():
                 return generation.get_apprendissage()[generation.get_colors().index(color)]
         raise ValueError("Color not find in the generations object")
-            
+
+    def get_time_gestation_by_color_and_sex(self, color: str, sex : str) -> int:
+        for generation in self.generations:
+            if color in generation.get_colors() :
+                if sex == "M" :
+                    return generation.get_time_gestation()[0]
+                elif sex == "F" :
+                    return generation.get_time_gestation()[1]
+                else :
+                    raise ValueError(f"sex : {sex} is not M or F")
+        raise ValueError("Color not find in the generations object")
+
     def get_list_bicolor(self) -> list :
         list_bicolor = []
         for generation in self.generations :
@@ -110,38 +131,38 @@ class Generations:
     def initialize_generations(self):
  
         generations_data = [
-            # (generation, monocolor, dict(color: apprentissage (%)), gestation time(male, female) (h))
-            (1, True, {"Rousse": 1.0, "Amande": 1.0, "Dorée": 0.2}, (24, 48)),
-            (2, False, {"Rousse et Amande": 0.8, "Rousse et Dorée": 0.8, "Amande et Dorée": 0.8}, (24, 60)),
-            (3, True, {"Indigo": 0.8, "Ebène": 0.8}, (24, 72)),
+            # (generation, monocolor, dict(color: apprentissage (%)), gestation time(male, female, born) (h))
+            (1, True, {"Rousse": 1.0, "Amande": 1.0, "Dorée": 0.2}, (24, 48, 36)),
+            (2, False, {"Rousse et Amande": 0.8, "Rousse et Dorée": 0.8, "Amande et Dorée": 0.8}, (24, 60, 36)),
+            (3, True, {"Indigo": 0.8, "Ebène": 0.8}, (24, 72, 36)),
             (4, False, {
                 "Rousse et Indigo": 0.8, "Rousse et Ebène": 0.8, "Amande et Indigo": 0.8, "Amande et Ebène": 0.8,
-                "Dorée et Indigo": 0.8, "Dorée et Ebène": 0.8, "Indigo et Ebène": 0.8}, (24, 84)),
-            (5, True, {"Pourpre": 0.6, "Orchidée": 0.6}, (24, 96)),
+                "Dorée et Indigo": 0.8, "Dorée et Ebène": 0.8, "Indigo et Ebène": 0.8}, (24, 84, 36)),
+            (5, True, {"Pourpre": 0.6, "Orchidée": 0.6}, (24, 96, 36)),
             (6, False, {
                 "Pourpre et Rousse": 0.6, "Orchidée et Rousse": 0.6, "Amande et Pourpre": 0.6, "Amande et Orchidée": 0.6,
                 "Dorée et Pourpre": 0.6, "Dorée et Orchidée": 0.6, "Indigo et Pourpre": 0.6, "Indigo et Orchidée": 0.6,
-                "Ebène et Pourpre": 0.6, "Ebène et Orchidée": 0.6, "Pourpre et Orchidée": 0.6}, (24, 108)),
-            (7, True, {"Ivoire": 0.6, "Turquoise": 0.6}, (24, 120)),
+                "Ebène et Pourpre": 0.6, "Ebène et Orchidée": 0.6, "Pourpre et Orchidée": 0.6}, (24, 108, 36)),
+            (7, True, {"Ivoire": 0.6, "Turquoise": 0.6}, (24, 120, 36)),
             (8, False, {
                 "Ivoire et Rousse": 0.4, "Turquoise et Rousse": 0.4, "Amande et Ivoire": 0.4, "Amande et Turquoise": 0.4,
                 "Dorée et Ivoire": 0.4, "Dorée et Turquoise": 0.4, "Indigo et Ivoire": 0.4, "Indigo et Turquoise": 0.4,
                 "Ebène et Ivoire": 0.4, "Ebène et Turquoise": 0.4, "Pourpre et Ivoire": 0.4, "Turquoise et Pourpre": 0.4,
-                "Ivoire et Orchidée": 0.4, "Turquoise et Orchidée": 0.4, "Ivoire et Turquoise": 0.4}, (24, 132)),
-            (9, True, {"Emeraude": 0.4, "Prune": 0.4}, (24, 144)),
+                "Ivoire et Orchidée": 0.4, "Turquoise et Orchidée": 0.4, "Ivoire et Turquoise": 0.4}, (24, 132, 36)),
+            (9, True, {"Emeraude": 0.4, "Prune": 0.4}, (24, 144, 36)),
             (10, False, {
                 "Rousse et Emeraude": 0.2, "Rousse et Prune": 0.2, "Amande et Emeraude": 0.2, "Amande et Prune": 0.2,
                 "Dorée et Emeraude": 0.2, "Dorée et Prune": 0.2, "Indigo et Emeraude": 0.2, "Indigo et Prune": 0.2,
                 "Ebène et Emeraude": 0.2, "Ebène et Prune": 0.2, "Pourpre et Emeraude": 0.2, "Pourpre et Prune": 0.2,
                 "Orchidée et Emeraude": 0.2, "Orchidée et Prune": 0.2, "Ivoire et Emeraude": 0.2, "Ivoire et Prune": 0.2,
-                "Turquoise et Emeraude": 0.2, "Turquoise et Prune": 0.2, "Prune et Emeraude": 0.2}, (24, 156))
+                "Turquoise et Emeraude": 0.2, "Turquoise et Prune": 0.2, "Prune et Emeraude": 0.2}, (24, 156, 36))
         ]
 
         generations = []
-        for number, monocolor, color_weights in generations_data:
+        for number, monocolor, color_weights, tuple_time in generations_data:
             colors = list(color_weights.keys())          # Extract the colors (keys) from the dictionary
             apprentissage = list(color_weights.values()) # Extract the weights (values) from the dictionary
-            generation = Generation(number, apprentissage, monocolor, colors)
+            generation = Generation(number, apprentissage, monocolor, colors, tuple_time)
             generations.append(generation)
 
         return generations
@@ -235,12 +256,13 @@ class Genealogie:
                 f"parents: {self.get_genealogie(1)}\n"
                 f"grand parents: {self.get_genealogie(2)}\n"
                 f"great-grand parents: {self.get_genealogie(3)}")
-    
+
 class Elevage:  
 
     def __init__(self, dragodindes : list) :
         self.dragodindes = dragodindes
         self.generations = Generations()
+        self.list_new_born = []
         self.special_cases = {
             "Rousse et Dorée": ["Ebène", "Orchidée"],
             "Amande et Dorée": ["Indigo", "Ebène"],
@@ -268,17 +290,38 @@ class Elevage:
     def get_special_cases_keys(self) :
         return self.special_cases.keys()
     
+    def update_time(self):
+        # Iterate over list_new_born and update gestation time for foetus 
+        # while calling born() if gestation time reaches zero.
+        self.list_new_born = [
+            foetus for foetus in self.list_new_born
+            if not self._process_foetus(foetus)
+        ]
+
+        # Iterate over dd and update gestation time for adulte.
+        for dd in self.dragodindes :
+            if dd.get_gestation_time() > 0 :
+                dd.reduce_gestation_time_dd()
+
+    def _process_foetus(self, foetus):
+        # Reduce gestation time and check if foetus is ready to be born.
+        foetus.reduce_gestation_time_dd()
+        if foetus.get_gestation_time() == 0:
+            self.born(foetus)
+            return True  # Signal that the foetus should be removed from the list
+        return False
+    
     def get_dd_by_id(self, id: int) :
         for dragodinde in self.dragodindes:
             if dragodinde.get_id() == id :
                 return dragodinde
         raise ValueError(f"ID = {id}, not find in the elevage")
     
-    def check_mort(self, dragodinde:Dragodinde) :
+    def check_death(self, dragodinde:Dragodinde) :
         if dragodinde.get_nombre_reproductions() >= 20:
             self.dragodindes = [dd for dd in self.dragodindes if dd.id != dragodinde.get_id()]
 
-    def naissance(self, dragodinde:Dragodinde) :
+    def born(self, dragodinde:Dragodinde) :
         self.dragodindes.append(dragodinde)
 
     def has_common_element(self, list1, list2):
@@ -437,7 +480,7 @@ class Elevage:
         if male.get_sex() == female.get_sex():
             raise ValueError("Cannot breed dragodindes of the same sex.")
 
-        if male.get_temps_gestation() > 0 or female.get_temps_gestation() > 0 :
+        if male.get_gestation_time() > 0 or female.get_gestation_time() > 0 :
             raise ValueError("Cannot breed dragodinddes of a gestation time > 0")
         
         # Calcul the color probablity dictionnary
@@ -446,23 +489,25 @@ class Elevage:
         dic_probability = self.crossing(male, female)
         dic_probability = self.round_dict_values(self.normalise_proba(dic_probability))
         number_new_born = self.number_new_born()
-        list_new_born = []
 
         for _ in range(number_new_born) :
             # Create new dd
             sexe = random.choice(['M', 'F'])
-            nouvel_id = len(self.dragodindes) + 1
+            id = len(self.dragodindes) + 1
             color = self.choice_color(dic_probability)
             generation = self.get_generation(color)
             node_parent_m = male.get_arbre_genealogique().get_node()
             node_parent_f = female.get_arbre_genealogique().get_node()
             new_ind = Node(color, 0.5, node_parent_m, node_parent_f)
-            nouvel_arbre_genealogique = Genealogie(new_ind)
-            nouvelle_dd = Dragodinde(nouvel_id, sexe, color, generation, nouvel_arbre_genealogique)
-            self.naissance(nouvelle_dd)
-            list_new_born.append(nouvelle_dd)
+            ancestor_tree = Genealogie(new_ind)
+            new_dd = Dragodinde(id, sexe, color, generation, 36, ancestor_tree)
+            self.list_new_born.append(new_dd)
 
-        self.check_mort(male)
-        self.check_mort(female)
+        self.check_death(male)
+        self.check_death(female)
 
-        return list_new_born, dic_probability
+        time_m = self.generations.get_time_gestation_by_color_and_sex(male.get_color(), 'M')
+        time_f = self.generations.get_time_gestation_by_color_and_sex(female.get_color(), 'F')
+
+        male.set_gestation_time(time_m)
+        female.set_gestation_time(time_f)

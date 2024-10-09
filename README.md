@@ -16,9 +16,8 @@ Road2Ten is IA project designed to optimize the breeding process of Dragodindes 
 The project encompasses various models, both machine learning-based and traditional, designed to progressively achieve a new generation of Dragodindes. The breeding process, including the probability determination for color outcomes based on parental colors and genealogical data, is derived from the formulas and information provided on [this website](https://felis-silvestris.lescigales.org/).
 
 However, there are a few key differences :
-
-- Only one Dragodinde is produced per breeding.
 - Capacities are not considered.
+- Times are not present (in the standart model) / time are present but change (in the time model)
 
 ## Installation
 
