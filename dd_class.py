@@ -1,9 +1,7 @@
 from collections import defaultdict 
 import random
-#from dataclasses import dataclass, field
-#from typing import Optional
+from itertools import islice
 
-# @dataclass
 class Dragodinde:
     def __init__(self, id : int, sex: str, color: str, generation: int, arbre_genealogique=None, nombre_reproductions=0):
         self.id = id
@@ -179,65 +177,26 @@ class Node:
 
 # heritage Node ?
 class Genealogie:
-    def __init__(self, root_node:Node):
-        self.root_node = root_node
+    def __init__(self, root):
+        self.root = {0: [root]} if isinstance(root, str) else root
 
-    def get_node(self) :
-        return self.root_node
+    def get_tree(self) :
+        return self.root
 
-    def init_weight(self, node, current_level, dic_weight_level):
-        if current_level > 3 or node is None:
-            return
+    @staticmethod
+    def combine_tree(parent_1_tree, parent_2_tree, new_color):
+        new_tree = {0: new_color}
+        new_tree.update({idx + 1: tree_1 + tree_2 for idx, (tree_1, tree_2) in enumerate(islice(zip(parent_1_tree, parent_2_tree), 3))})
+        return new_tree
 
-        node.set_weight(dic_weight_level[current_level])
-        parents = [node.get_ancestor_m(), node.get_ancestor_f()]
+    def get_ancestors_at_level(self, level):
+        return self.root[level]
 
-        for i, parent in enumerate(parents):
-            if current_level < 3 :
-                if i == 0:
-                    node.ancestor_m = parent
-                else :
-                    node.ancestor_f = parent
-            
-            self.init_weight(parent, current_level + 1, dic_weight_level)
-
-    def update_weights(self) :
-        dic_weight_level = {0: 10/42, 1: 6/42, 2: 3/42, 3: 1/42} # weight
-        dump = Node(None, None, self.root_node)
-        self.init_weight(self.root_node, 0, dic_weight_level)
-        return Genealogie(dump.get_ancestor_m())
-
-    def get_ancestors_at_level(self, node, current_level, level):
-        if node is None:
-            return []
-        if current_level == level:
-            return [node.get_color()]
-        else:
-            ancestors = []
-            ancestors += self.get_ancestors_at_level(node.get_ancestor_m(), current_level + 1, level)
-            ancestors += self.get_ancestors_at_level(node.get_ancestor_f(), current_level + 1, level)
-            return ancestors
-
-    def get_genealogie(self, level):
-        return self.get_ancestors_at_level(self.root_node, 0, level)
-
-    def traverse_genealogy(self, node, nodes_list, current_level):
-        if node is None or current_level > 3 :
-            return
-        nodes_list.append(node)
-        self.traverse_genealogy(node.get_ancestor_m(), nodes_list, current_level + 1)
-        self.traverse_genealogy(node.get_ancestor_f(), nodes_list, current_level + 1)
-
-    def get_all_nodes(self):
-        nodes_list = []
-        self.traverse_genealogy(self.root_node, nodes_list, 0)
-        return nodes_list
-    
     def __str__(self):
-        return (f"individu: {self.get_genealogie(0)}\n"
-                f"parents: {self.get_genealogie(1)}\n"
-                f"grand parents: {self.get_genealogie(2)}\n"
-                f"great-grand parents: {self.get_genealogie(3)}")
+        return (f"individu: {self.root(0)}\n"
+                f"parents: {self.root(1)}\n"
+                f"grand parents: {self.root(2)}\n"
+                f"great-grand parents: {self.root(3)}")
     
 class Elevage:  
 
@@ -380,29 +339,21 @@ class Elevage:
 
     def crossing(self, dinde_m: Dragodinde, dinde_f: Dragodinde) -> dict :
 
-        node_list_dinde_m = dinde_m.get_arbre_genealogique().get_all_nodes()
-        node_list_dinde_f = dinde_f.get_arbre_genealogique().get_all_nodes()
- 
-        dic_dinde_m = dict()
-        dic_dinde_f = dict()
+        dic_dinde_m = dinde_m.get_arbre_genealogique().get_tree()
+        dic_dinde_f = dinde_f.get_arbre_genealogique().get_tree()
         color_prob = defaultdict(float)
-
-        # Create 2 color dict from both genealogic tree 
-        for node_m in node_list_dinde_m :
-            color_m, weight_m = node_m.get_color(), node_m.get_weight()
-            dic_dinde_m[color_m] = dic_dinde_m.get(color_m, 0) + weight_m 
-        
-        for node_f in node_list_dinde_f :
-            color_f, weight_f = node_f.get_color(), node_f.get_weight()
-            dic_dinde_f[color_f] = dic_dinde_f.get(color_f, 0) + weight_f
-
+    
         # Crossing both dic 
-        for color_m, weight_m in dic_dinde_m.items() :
-            for color_f, weight_f in dic_dinde_f.items() :
-                if self.check_compatibility(color_m, color_f) :
-                    color_prob = self.crossing_compatible(color_m, weight_m, color_f, weight_f, color_prob)
-                else:
-                    color_prob = self.crossing_incompatible(color_m, weight_m, color_f, weight_f, color_prob)
+        for weight_m, list_color_m in dic_dinde_m.items() :
+            for weight_f, list_color_f in dic_dinde_f.items() :
+                curr_weight_m = self.dic_weight_level[weight_m]
+                curr_weight_f = self.dic_weight_level[weight_f]
+                for color_m in list_color_m : 
+                    for color_f in list_color_f :
+                        if self.check_compatibility(color_m, color_f) :
+                            color_prob = self.crossing_compatible(color_m, curr_weight_m, color_f, curr_weight_f, color_prob)
+                        else:
+                            color_prob = self.crossing_incompatible(color_m, curr_weight_m, color_f, curr_weight_f, color_prob)
         
         if not color_prob:
             raise ValueError("Probability color dictionary is empty")

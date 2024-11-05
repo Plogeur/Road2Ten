@@ -2,35 +2,10 @@ import unittest
 import dd_class
 
 # Website to generated test : https://felis-silvestris.lescigales.org/
-class TestGenealogie(unittest.TestCase):
-
-    def setUp(self):
-        # Level 3 (Great Grandparents)
-        self.ggp1 = dd_class.Node("ggp1", 0)
-        self.ggp2 = dd_class.Node("ggp2", 0)
-
-        # Level 2 (Grandparents)
-        self.gp1 = dd_class.Node("gp1", 0, ancestor_m=self.ggp1, ancestor_f=self.ggp2)
-        self.gp2 = dd_class.Node("gp2", 0)
-
-        # Level 1 (Parents)
-        self.p1 = dd_class.Node("p1", 0, ancestor_m=self.gp1, ancestor_f=self.gp2)
-
-        # Root
-        self.root = dd_class.Node("root", 0, ancestor_m=self.p1)
-        self.genealogy = dd_class.Genealogie(self.root)
-
-    def test_init_weight(self):
-        self.genealogy.update_weights()
-        all_nodes = self.genealogy.get_all_nodes()
-        initiated_nodes = [node.get_weight() for node in all_nodes]
-        expected_weights = [10/42, 6/42, 3/42, 1/42, 1/42, 3/42]
-        self.assertEqual(initiated_nodes, expected_weights)
-
 class TestCrosing(unittest.TestCase):
 
     def setUp(self) :
-        self.maxDiff = None
+        self.maxDiff = None # unittest parameter
 
         #                    id  sex   color  generation   root
         # dd_class.Dragodinde(1, "M", "Rousse", 1, self.genealogie_s1)
@@ -48,91 +23,37 @@ class TestCrosing(unittest.TestCase):
         self.dd_sb4 = dd_class.Dragodinde(203, "F", "Rousse et Amande", 2)
 
         # first bi
-        self.p1 = dd_class.Node("Rousse")
-        self.p2 = dd_class.Node("Dorée")
-        self.ind_1 = dd_class.Node("Rousse et Dorée", None, self.p1, self.p2)
-        self.genealogie_1 = dd_class.Genealogie(self.ind_1)
-        self.genealogie_1.update_weights()
+        self.genealogie_1 = {0: ["Rousse et Dorée"], 1: ["Rousse","Dorée"]}
         self.dd_fb1 = dd_class.Dragodinde(300, "M", "Rousse et Dorée", 2, self.genealogie_1)
 
-        self.p1 = dd_class.Node("Amande")
-        self.p2 = dd_class.Node("Dorée")
-        self.ind_1 = dd_class.Node("Amande et Dorée", None, self.p1, self.p2)
-        self.genealogie_1 = dd_class.Genealogie(self.ind_1)
-        self.genealogie_1.update_weights()
-        self.dd_fb2 = dd_class.Dragodinde(301, "F", "Amande et Dorée", 2, self.genealogie_1)
+        # second bi
+        self.genealogie_2 = {0: ["Amande et Dorée"], 1: ["Amande","Dorée"]}
+        self.dd_fb2 = dd_class.Dragodinde(301, "F", "Amande et Dorée", 2, self.genealogie_2)
 
         # Mono Amande
-        self.gp1 = dd_class.Node("Ebène")
-        self.gp2 = dd_class.Node("Amande")
-        self.p1 = dd_class.Node("Amande", None, self.gp1, self.gp2)
-        self.p2 = dd_class.Node("Amande")
-        self.ind_1 = dd_class.Node("Amande", None, self.p1, self.p2)
-        self.genealogie_1 = dd_class.Genealogie(self.ind_1)
-        self.genealogie_1.update_weights()
-        self.dd_1 = dd_class.Dragodinde(1, "M", "Amande", 1, self.genealogie_1)
+        self.genealogie_3 = {0: ["Amande"], 1: ["Amande","Amande"], 2: ["Ebène","Amande"]}
+        self.dd_1 = dd_class.Dragodinde(1, "M", "Amande", 1, self.genealogie_3)
 
         # Mono Rousse
-        self.gp3 = dd_class.Node("Indigo")
-        self.gp4 = dd_class.Node("Rousse")
-        self.p2 = dd_class.Node("Rousse", 0.5, self.gp3, self.gp4)
-        self.p3 = dd_class.Node("Rousse")
-        self.ind_2 = dd_class.Node("Rousse", None, self.p2, self.p3)
-        self.genealogie_2 = dd_class.Genealogie(self.ind_2)
-        self.genealogie_2.update_weights()
-        self.dd_2 = dd_class.Dragodinde(2, "F", "Rousse", 1, self.genealogie_2)
+        self.genealogie_4 = {0: ["Rousse"], 1: ["Rousse","Rousse"], 2: ["Indigo","Rousse"]}
+        self.dd_2 = dd_class.Dragodinde(2, "F", "Rousse", 1, self.genealogie_4)
 
         # Bi Rousse et Amande
-        self.ggp1 = dd_class.Node("Dorée et Orchidée")
-        self.ggp2 = dd_class.Node("Orchidée et Rousse")
-        self.ggp3 = dd_class.Node("Rousse et Ebène")
-        self.ggp4 = dd_class.Node("Turquoise et Rousse")
-        self.gp5 = dd_class.Node("Rousse et Prune", None, self.ggp1, self.ggp2)
-        self.gp6 = dd_class.Node("Ebène et Ivoire", None, self.ggp3, self.ggp4)
-        self.p3 = dd_class.Node("Pourpre et Rousse", None, self.gp5, self.gp6)
-        self.gp7 = dd_class.Node("Indigo et Orchidée")
-        self.gp8 = dd_class.Node("Amande et Turquoise")
-        self.p4 = dd_class.Node("Amande et Indigo", None, self.gp7, self.gp8)
-        self.ind_1 = dd_class.Node("Rousse et Amande", None, self.p3, self.p4)
-        self.genealogie_3 = dd_class.Genealogie(self.ind_1)
-        self.genealogie_3.update_weights()
-        self.dd_3 = dd_class.Dragodinde(3, "M", "Rousse et Amande", 2, self.genealogie_3)
+        self.genealogie_5 = {0: ["Rousse et Amande"], 1: ["Pourpre et Rousse","Amande et Indigo"],
+                            2: ["Rousse et Prune","Ebène et Ivoire", "Indigo et Orchidée", "Amande et Turquoise"],
+                            3 : ["Dorée et Orchidée", "Orchidée et Rousse", "Rousse et Ebène", "Turquoise et Rousse"]}
+        self.dd_3 = dd_class.Dragodinde(3, "M", "Rousse et Amande", 2, self.genealogie_5)
 
-        # Bi Pourpre et Orchidée  
-        self.ggp5 = dd_class.Node("Rousse et Ebène")
-        self.ggp6 = dd_class.Node("Turquoise et Rousse")
-        self.ggp7 = dd_class.Node("Rousse et Prune")
-        self.ggp8 = dd_class.Node("Dorée et Indigo")
-        self.gp9 = dd_class.Node("Dorée et Emeraude", None, self.ggp5, self.ggp6)
-        self.gp10 = dd_class.Node("Orchidée et Emeraude", None, self.ggp7, self.ggp8)
-        self.p5 = dd_class.Node("Indigo et Ebène", None, self.gp9, self.gp10)
-        self.gp11 = dd_class.Node("Amande et Ivoire")
-        self.gp12 = dd_class.Node("Indigo et Ivoire")        
-        self.p6 = dd_class.Node("Ivoire et Prune", None, self.gp11, self.gp12)
-        self.ind_2 = dd_class.Node("Pourpre et Orchidée", None, self.p5, self.p6)
-        self.genealogie_4 = dd_class.Genealogie(self.ind_2)
-        self.genealogie_4.update_weights()
-        self.dd_4 = dd_class.Dragodinde(4, "F", "Pourpre et Orchidée", 6, self.genealogie_4)
+        # Bi Pourpre et Orchidée
+        self.genealogie_6 = {0: ["Pourpre et Orchidée"], 1: ["Indigo et Ebène","Ivoire et Prune"],
+                            2: ["Dorée et Emeraude","Orchidée et Emeraude", "Amande et Ivoire", "Indigo et Ivoire"], 
+                            3 : ["Rousse et Ebène", "Turquoise et Rousse", "Rousse et Prune", "Dorée et Indigo"]}
+        self.dd_4 = dd_class.Dragodinde(4, "F", "Pourpre et Orchidée", 6, self.genealogie_6)
 
         # big ancester 
-        self.gggp1 = dd_class.Node("Ebène", 1)
-        self.gggp2 = dd_class.Node("Prune", 0.2)
-        self.gggp3 = dd_class.Node("Orchidée", 0.6)
-        self.gggp4 = dd_class.Node("Pourpre", 0.5)
-        self.ggp1 = dd_class.Node("Amande", None, self.gggp1, self.gggp2)
-        self.ggp2 = dd_class.Node("Amande", None, self.gggp3, self.ggp4)
-        self.ggp3 = dd_class.Node("Amande")
-        self.ggp4 = dd_class.Node("Amande")
-        self.gp1 = dd_class.Node("Amande", None, self.ggp1, self.ggp2)
-        self.gp2 = dd_class.Node("Amande", None, self.ggp3, self.ggp4)
-        self.p1 = dd_class.Node("Amande", None, self.gp1, self.gp2)
-        self.gp3 = dd_class.Node("Amande")
-        self.gp4 = dd_class.Node("Amande")        
-        self.p2 = dd_class.Node("Amande", None, self.gp3, self.gp4)
-        self.ind_5 = dd_class.Node("Amande", None, self.p1, self.p2)
-        self.genealogie_5 = dd_class.Genealogie(self.ind_5)
-        self.genealogie_5.update_weights()
-        self.dd_5 = dd_class.Dragodinde(5, "M", "Amande", 1, self.genealogie_5)
+        self.genealogie_7 = {0: ["Amande"], 1: ["Amande","Amande"], 2: ["Amande","Amande", "Amande", "Amande"], 
+                            3 : ["Amande", "Amande", "Amande", "Amande", "Amande", "Amande", "Amande", "Amande"]}
+        self.dd_5 = dd_class.Dragodinde(5, "M", "Amande", 1, self.genealogie_7)
  
         self.elevage = dd_class.Elevage([self.dd_1, self.dd_2, self.dd_3, self.dd_4, self.dd_5,
                                          self.dd_sm1, self.dd_sm2, self.dd_sb1, self.dd_sb2,
