@@ -51,4 +51,4 @@ The project includes three traditional models and one machine learning model bas
 
 ## Results 
 
-coming soon
+![results](https://github.com/user-attachments/assets/16c9178a-af02-4905-b054-7fc9df4b9f8b)
